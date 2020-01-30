@@ -6,6 +6,6 @@ The buttons/switches are read in via a user callback function. This enables matr
 
 ### Functionality:
 
-Request status of a button/switch
+- Request status of a button/switch
 
-Events: Pressed, released, pressed long and pressed short
+- Events: Pressed, released, pressed long and pressed short
