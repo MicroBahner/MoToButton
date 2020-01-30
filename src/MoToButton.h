@@ -2,24 +2,35 @@
  *  manage 8, 16 or 32 Buttons with debouncing, edge detection
  *  and long/short press detection
  *  
+ * Readiing the hardeware state of the buttons is done by a usercallback. 
+ * This enables designes where the buttons/switches are arranged in a matrix and/or read via an port extender
+ * The return value of his function has to be a byte, uint or ulong according to the definition of button_t
+ * below. Every button/switch is represented by one bit, where '1' means the button is pressed.
  */
 #ifndef MOTOBUTTON_H
 #define MOTOBUTTON_H
 #include <Arduino.h>
-//typedef uint8_t button_t;       // manage up to 8 buttons
+typedef uint8_t button_t;       // manage up to 8 buttons
 //typedef uint16_t button_t;       // manage up to 16 buttons
-typedef uint32_t button_t;       // manage up to 32 buttons
+//typedef uint32_t button_t;       // manage up to 32 buttons
 
 class MoToButton {
   public:
+  // Construktor parameter:
+  // getHwButtons       Adress of the userfuction the reads the state of the buttons
+  // debTime            Debouncetime in ms
+  // pressTime          (in ms ) if the button is pressed longer, it is a 'long press'
+  //                     max presstime = debTime*255
   MoToButton( button_t (*getHWbuttons)(), uint8_t debTime, uint16_t pressTime );
-    // max presstime = debTime*255
-  void    processButtons();               // must be called in loop frequently
-  boolean state( uint8_t buttonNbr );     // get static state of button (debounced)
-  boolean shortPress( uint8_t buttonNbr );     // if button was pressed short  
-  boolean longPress( uint8_t buttonNbr );      // if button was pressed long
-  boolean pressed( uint8_t buttonNbr );   // leading edge of button press
-  boolean released( uint8_t buttonNbr );   // trailing edge of button press
+  
+  
+  void    processButtons();                 // must be called in the loop frequently
+                                            // if its called less then debTime, pressTime will be inaccurate
+  boolean state( uint8_t buttonNbr );       // get static state of button (debounced)
+  boolean shortPress( uint8_t buttonNbr );  // true if button was pressed short ( set when button is released, reset after call )  
+  boolean longPress( uint8_t buttonNbr );   // true if button was pressed long ( set when button is released, reset after call )  
+  boolean pressed( uint8_t buttonNbr );     // true if button is pressed ( reset after call )
+  boolean released( uint8_t buttonNbr );    // true if button is released ( reset after call )
 
 
   private:
