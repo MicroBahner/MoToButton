@@ -1,13 +1,13 @@
-/* Multibutton
+/* MoTobutton
     manage 8, 16 or 32 Buttons with debouncing, edge detection
     and long/short press detection
 
 */
 
 
-#include <MultiButton.h>
+#include <MoToButton.h>
 
-MultiButton::MultiButton( button_t (*getHWbuttons)(), uint8_t debTime, uint16_t pressTime ) {
+MoToButton::MoToButton( button_t (*getHWbuttons)(), uint8_t debTime, uint16_t pressTime ) {
   _getHWbuttons = getHWbuttons;
   _debTime = debTime;
   _pressTime = pressTime / debTime;   // in debTime tics
@@ -24,7 +24,7 @@ MultiButton::MultiButton( button_t (*getHWbuttons)(), uint8_t debTime, uint16_t 
   }
 }
 
-void    MultiButton::processButtons() {
+void    MoToButton::processButtons() {
   // must be called in loop frequently
   if ( millis() - _lastReadTime > (uint32_t) _debTime ) {
     _lastReadTime = millis();
@@ -56,13 +56,13 @@ void    MultiButton::processButtons() {
   }
 }
 
-boolean MultiButton::state( uint8_t buttonNbr ) {
+boolean MoToButton::state( uint8_t buttonNbr ) {
   if ( buttonNbr >= _buttonCnt ) return 0;
   // get static state of button (debounced)
   return bitRead( _actState, buttonNbr );
 }
 
-boolean MultiButton::shortPress( uint8_t buttonNbr ) {
+boolean MoToButton::shortPress( uint8_t buttonNbr ) {
   // if button was pressed short
   if ( buttonNbr >= _buttonCnt ) return 0;
   // get short pressed state of button (debounced)
@@ -70,7 +70,7 @@ boolean MultiButton::shortPress( uint8_t buttonNbr ) {
   bitClear( _shortPress, buttonNbr );
   return temp;
 }
-boolean MultiButton::longPress( uint8_t buttonNbr ) {
+boolean MoToButton::longPress( uint8_t buttonNbr ) {
   // if button was pressed long
   if ( buttonNbr >= _buttonCnt ) return 0;
   // get short pressed state of button (debounced)
@@ -78,7 +78,7 @@ boolean MultiButton::longPress( uint8_t buttonNbr ) {
   bitClear( _longPress, buttonNbr );
   return temp;
 }
-boolean MultiButton::pressed( uint8_t buttonNbr ) {
+boolean MoToButton::pressed( uint8_t buttonNbr ) {
   // leading edge of button press
   if ( buttonNbr >= _buttonCnt ) return 0;
   // get momentarily pressed state of button (debounced)
@@ -86,7 +86,7 @@ boolean MultiButton::pressed( uint8_t buttonNbr ) {
   bitClear( _leadingEdge, buttonNbr );
   return temp;
 }
-boolean MultiButton::released( uint8_t buttonNbr ) {  // trailing edge of button press
+boolean MoToButton::released( uint8_t buttonNbr ) {  // trailing edge of button press
   // leading edge of button press
   if ( buttonNbr >= _buttonCnt ) return 0;
   // get momentarily released state of button (debounced)

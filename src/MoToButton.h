@@ -1,18 +1,18 @@
-/* Multibutton
+/* MoTobutton
  *  manage 8, 16 or 32 Buttons with debouncing, edge detection
  *  and long/short press detection
  *  
  */
-#ifndef MULTIBUTTON_H
-#define MULTIBUTTON_H
+#ifndef MOTOBUTTON_H
+#define MOTOBUTTON_H
 #include <Arduino.h>
-typedef uint8_t button_t;       // manage up to 8 buttons
+//typedef uint8_t button_t;       // manage up to 8 buttons
 //typedef uint16_t button_t;       // manage up to 16 buttons
-//typedef uint32_t button_t;       // manage up to 32 buttons
+typedef uint32_t button_t;       // manage up to 32 buttons
 
-class MultiButton {
+class MoToButton {
   public:
-  MultiButton( button_t (*getHWbuttons)(), uint8_t debTime, uint16_t pressTime );
+  MoToButton( button_t (*getHWbuttons)(), uint8_t debTime, uint16_t pressTime );
     // max presstime = debTime*255
   void    processButtons();               // must be called in loop frequently
   boolean state( uint8_t buttonNbr );     // get static state of button (debounced)

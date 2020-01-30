@@ -2,7 +2,7 @@
 // mit Entprellung der Taster und Aufteilung in Eingabe - Verarbeitung - Ausgabe
 // mit Flankenerkennung im Eingabeblock
 
-#include <MultiButton.h>
+#include <MoToButton.h>
 // Variablen deklarieren und mit definierten Grundwerten vorbelegen
 const byte TasterPinNr [] = { A0, A1, A2, A3 };
 const byte AnzahlTaster = sizeof(TasterPinNr);                  // Anzahl der angeschlossenen Taster
@@ -10,7 +10,7 @@ const byte AnzahlTaster = sizeof(TasterPinNr);                  // Anzahl der an
 const byte LEDgruenPinNr[] = { 2, 3, 4, 5 };  // Array für Pin-Nummern der grünen LEDs definieren
 const byte LEDrotPinNr[]   = { 6, 7, 8, 9 };   // Array für Pin-Nummern der roten LEDs definieren
 
-uint8_t getHW( void ) {
+button_t getHW( void ) {
   // Einlesen der Tasterstates
   uint8_t tasterTemp = 0;
   for (byte i = 0; i < AnzahlTaster; i++) {
@@ -19,7 +19,7 @@ uint8_t getHW( void ) {
   return tasterTemp;
 }
 
-MultiButton Taster1( getHW, 20, 500 );
+MoToButton Taster1( getHW, 20, 500 );
 
 void setup()
 {

@@ -24,8 +24,7 @@ released	KEYWORD2
 #######################################
 # Constants (LITERAL1)
 #######################################
-ON	LITERAL1
-OFF	LITERAL1
+button_t	LITERAL1
 
 
 
