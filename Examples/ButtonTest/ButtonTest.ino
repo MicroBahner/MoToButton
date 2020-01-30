@@ -10,16 +10,16 @@ const byte anzahlTaster = sizeof(tasterPinNr);                  // Anzahl der an
 const byte LEDgruenPinNr[] = { 2, 3, 4, 5 };  // Array für Pin-Nummern der grünen LEDs definieren
 const byte LEDrotPinNr[]   = { 6, 7, 8, 9 };   // Array für Pin-Nummern der roten LEDs definieren
 
-button_t getHW( void ) {
+uint32_t getHW( void ) {
   // Einlesen der Tasterstates
-  button_t tasterTemp = 0;
+ uint32_t tasterTemp = 0;
   for (byte i = 0; i < anzahlTaster; i++) {
     bitWrite( tasterTemp,i,!digitalRead(tasterPinNr[i]) );     // Fragt den Taster ab und merkt sich den Status
   }
   return tasterTemp;
 }
 
-MoToButton Taster1( getHW, 20, 500 );
+MoToButton<uint32_t> Taster1( getHW, 20, 500 );
 
 void setup()
 {
