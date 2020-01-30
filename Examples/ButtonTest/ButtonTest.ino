@@ -11,10 +11,11 @@ const byte LEDgruenPinNr[] = { 2, 3, 4, 5 };  // Array für Pin-Nummern der grü
 const byte LEDrotPinNr[]   = { 6, 7, 8, 9 };   // Array für Pin-Nummern der roten LEDs definieren
 
 button_t getHW( void ) {
-  // Einlesen der Tasterstates
+  // Einlesen der Tasterzustände
   button_t tasterTemp = 0;
   for (byte i = 0; i < anzahlTaster; i++) {
-    bitWrite( tasterTemp,i,!digitalRead(tasterPinNr[i]) );     // Fragt den Taster ab und merkt sich den Status
+    // Tasterstati lesen und in den entsprechenden Bits speichern
+    bitWrite( tasterTemp,i,!digitalRead(tasterPinNr[i]) );
   }
   return tasterTemp;
 }
@@ -46,14 +47,14 @@ void loop() {
   
   // Block "Verarbeitung / Ausgabe": TasterStellung auswerten und Aktion durchführen
   for (byte i = 0; i < anzahlTaster; i++) {
-    // Mit dieser Bedingung wird mit steigender Flanke (also beim Drücken des Tasters) geschaltet
+    // Mit dieser Bedingung wird mit fallender Flanke ( Loslassen des Tasters) nach kurzem Drücken geschaltet
     // -> beim Drücken rote Led toggeln
     if ( Taster1.longPress(i) ) {
       digitalWrite(LEDrotPinNr[i], !digitalRead(LEDrotPinNr[i]));      // rote LED einschalten
       Serial.print(" Langer Tastendruck: "); Serial.println(i);
     }
 
-    // Mit dieser Bedingung wird mit fallender Flanke (also beim Loslassen des Tasters) geschaltet
+    // Mit dieser Bedingung wird mit fallender Flanke ( Loslassen des Tasters) nach langem Drücken geschaltet
     // -> beim Loslassen gruene Led toggeln
     if ( Taster1.shortPress(i) ) {
       digitalWrite(LEDgruenPinNr[i], !digitalRead(LEDgruenPinNr[i]));      // rote LED ausschalten
