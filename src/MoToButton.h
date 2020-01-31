@@ -10,8 +10,8 @@
 #ifndef MOTOBUTTON_H
 #define MOTOBUTTON_H
 #include <Arduino.h>
-typedef uint8_t button_t;       // manage up to 8 buttons
-//typedef uint16_t button_t;       // manage up to 16 buttons
+//typedef uint8_t button_t;       // manage up to 8 buttons
+typedef uint16_t button_t;       // manage up to 16 buttons
 //typedef uint32_t button_t;       // manage up to 32 buttons
 
 class MoToButton {
@@ -25,7 +25,7 @@ class MoToButton {
   
   
   void    processButtons();                 // must be called in the loop frequently
-                                            // if its called less then debTime, pressTime will be inaccurate
+                                            // if its called less frequently than debTime, pressTime will be inaccurate
   boolean state( uint8_t buttonNbr );       // get static state of button (debounced)
   boolean shortPress( uint8_t buttonNbr );  // true if button was pressed short ( set when button is released, reset after call )  
   boolean longPress( uint8_t buttonNbr );   // true if button was pressed long ( set when button is released, reset after call )  
