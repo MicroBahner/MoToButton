@@ -27,9 +27,26 @@
  */
 #ifndef MOTOBUTTON_H
 #define MOTOBUTTON_H
+
 #include <Arduino.h>
 
-template < typename button_t >
+#ifndef BUTTONCNT
+#define BUTTONCNT 16
+#endif
+
+#if BUTTONCNT>32
+#error "too much buttons"
+#elif BUTTONCNT>16
+typedef uint32_t button_t;
+#warning "button_t = uint32_t!"
+#elif BUTTONCNT>8
+typedef uint16_t button_t;
+#warning "button_t = uint16_t!"
+#else
+typedef uint8_t button_t;
+#warning "button_t = uint8_t!"
+#endif
+
 class MoToButton {
   public:
     MoToButton( button_t (*getHWbuttons)(), uint8_t debTime, uint16_t pressTime ) {
