@@ -44,11 +44,7 @@ void loop() {
   
   // print to serial monitor if an event happens ( pressing or releasing )
   for ( byte btnNbr = 0; btnNbr < BUTTON_CNT; btnNbr++) {
-    if ( button1.pressed(btnNbr) ){
-      Serial.print(btnNbr); Serial.println(" pressed");
-    }
     if ( button1.pressed(btnNbr) ) {
-      Serial.println(btnNbr);
       sprintf( txtBuf, "button %d pressed", btnNbr );
       Serial.println(txtBuf);
     }
