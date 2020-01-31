@@ -108,10 +108,10 @@ class MoToButton {
         // edge bits are cleard when read or at the next inverted edge ( pressed-> released or vice versa )
         // leading edge
         _leadingEdge &= _actState;  // clear bits if button is no longer pressed
-        _leadingEdge = (~_lastState & _actState) || _leadingEdge;
+        _leadingEdge = (~_lastState & _actState) | _leadingEdge;
         // trailing edge
         _trailingEdge &= ~_actState;  // clear bits if button is pressed again
-        _trailingEdge = (_lastState & ~_actState) || _trailingEdge ;
+        _trailingEdge = (_lastState & ~_actState) | _trailingEdge ;
 
         _lastState = _actState;
 
