@@ -1,50 +1,83 @@
-/* MoTobutton
- *  manage 8, 16 or 32 Buttons with debouncing, edge detection
- *  and long/short press detection
- *  
- * Readiing the hardeware state of the buttons is done by a usercallback. 
- * This enables designes where the buttons/switches are arranged in a matrix and/or read via an port extender
- * The return value of his function has to be a byte, uint or ulong according to the definition of button_t
- * below. Every button/switch is represented by one bit, where '1' means the button is pressed.
+/* MoTobutton - a Arduino library to manage up to 8, 16 or 32 Buttons/Switches 
+  with debouncing, edge detection and long/short press detection.
+  Author: fpm, fpm-gh@mnet-mail.de
+  Copyright (c) 2020 All right reserved.
 
-  // Construktor parameter:
-  // getHwButtons       Adress of the userfuction the reads the state of the buttons
-  // debTime            Debouncetime in ms
-  // pressTime          (in ms ) if the button is pressed longer, it is a 'long press'
-  //                     max presstime = debTime*255
-  MoToButton( button_t (*getHWbuttons)(), uint8_t debTime, uint16_t pressTime );
+ Default is managing up to 16 buttons/switches.
+ The default can be changed to save RAM (up to 8 buttons) or to manage up to 32 buttons (with additional RAM consumption). 
+ This can be achieved by adding a '#define BUTTON_CNT nn' before the #include <MoToButtons>, where nn is the number 
+ of buttons to be managed ( 2...32 ). When this define is used, the best fit is automatically selected.
   
+ Reading the hardware state of the buttons is done by a usercallback function. 
+ This enables designs where the buttons/switches are arranged in a matrix and/or read via a port extender.
+ The return value of this function has to be a 8-Bit, 16-Bit or 32-Bit value according to the maximum manageable 
+ number of buttons. Every button/switch is represented by one bit, where '1' means the button is pressed.
+
+ 'button_t' is automtically set to the correct type and can be used to define the type of the callback function.
+ 
+
+  Constructor parameters:
+    button_t (*getHWbuttons)()  Adress of the userfuction that reads the state of the buttons
+    debTime                     Debouncetime in ms
+    pressTime                   (in ms ) If the button is pressed longer, it is a 'long press'
+                                max presstime = debTime*255
+    MoToButton( button_t (*getHWbuttons)(), uint8_t debTime, uint16_t pressTime );
+    example in sketch: 
+        MoToButton Buttons( readFunction, 20, 500 );
   
-  void    processButtons();                 // must be called in the loop frequently
-                                            // if its called less then debTime, pressTime will be inaccurate
-  boolean state( uint8_t buttonNbr );       // get static state of button (debounced)
-  boolean shortPress( uint8_t buttonNbr );  // true if button was pressed short ( set when button is released, reset after call )  
-  boolean longPress( uint8_t buttonNbr );   // true if button was pressed long ( set when button is released, reset after call )  
-  boolean pressed( uint8_t buttonNbr );     // true if button is pressed ( reset after call )
-  boolean released( uint8_t buttonNbr );    // true if button is released ( reset after call )
+  Methods to be called in loop:
+    void    processButtons();                 // must be called in the loop frequently
+                                            // if it is called less frequently than debTime, pressTime will be inaccurate
+    Reading the debounced state of the Buttons/Switches:                                          
+      boolean state( uint8_t buttonNbr );       // get static state of button (debounced)
+  
+    Reading events:
+      boolean shortPress( uint8_t buttonNbr );  // true if button was pressed short ( set when button is released, reset after call )  
+      boolean longPress( uint8_t buttonNbr );   // true if button was pressed long ( set when button is released, reset after call )  
+      boolean pressed( uint8_t buttonNbr );     // true if button is pressed ( reset after call )
+      boolean released( uint8_t buttonNbr );    // true if button is released ( reset after call )
+  
+    Event bits are set at the corresponding edge and they are cleared 
+    when read or at the next inverted edge ( pressed-> released or vice versa )
 
-
+    buttonNbr is a value from 0 to max buttons-1.
  */
+ /*
+   This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
 #ifndef MOTOBUTTON_H
 #define MOTOBUTTON_H
 
 #include <Arduino.h>
 
-#ifndef BUTTONCNT
-#define BUTTONCNT 16
+#ifndef BUTTON_CNT
+#define BUTTON_CNT 16
 #endif
 
-#if BUTTONCNT>32
+#if BUTTON_CNT>32
 #error "too much buttons"
-#elif BUTTONCNT>16
+#elif BUTTON_CNT>16
 typedef uint32_t button_t;
-#warning "button_t = uint32_t!"
-#elif BUTTONCNT>8
+//#warning "button_t = uint32_t!"
+#elif BUTTON_CNT>8
 typedef uint16_t button_t;
-#warning "button_t = uint16_t!"
+//#warning "button_t = uint16_t!"
 #else
 typedef uint8_t button_t;
-#warning "button_t = uint8_t!"
+//#warning "button_t = uint8_t!"
 #endif
 
 class MoToButton {
@@ -71,11 +104,14 @@ class MoToButton {
       if ( millis() - _lastReadTime > (uint32_t) _debTime ) {
         _lastReadTime = millis();
         _actState = _getHWbuttons();    // read button states
-        // edge detection
+        // edge detection - new detected edges are added to the corresponding bit field
+        // edge bits are cleard when read or at the next inverted edge ( pressed-> released or vice versa )
         // leading edge
-        _leadingEdge = ~_lastState & _actState;
+        _leadingEdge &= _actState;  // clear bits if button is no longer pressed
+        _leadingEdge = (~_lastState & _actState) || _leadingEdge;
         // trailing edge
-        _trailingEdge = _lastState & ~_actState ;
+        _trailingEdge &= ~_actState;  // clear bits if button is pressed again
+        _trailingEdge = (_lastState & ~_actState) || _trailingEdge ;
 
         _lastState = _actState;
 

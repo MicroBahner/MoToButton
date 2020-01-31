@@ -2,7 +2,7 @@
 // mit Entprellung der Taster und Aufteilung in Eingabe - Verarbeitung - Ausgabe
 // mit Flankenerkennung im Eingabeblock
 
-//#define BUTTONCNT 9
+#define BUTTON_CNT 4
 #include <MoToButton.h>
 // Variablen deklarieren und mit definierten Grundwerten vorbelegen
 const byte tasterPinNr [] = { A0, A1, A2, A3 };
