@@ -27,6 +27,8 @@ void setup()
     pinMode(buttonPin[i], INPUT_PULLUP); 
   }
   Serial.println("Starting loop");
+  sprintf( txtBuf, "max. managable buttons: %d", sizeof(button_t)*8 );
+  Serial.println( txtBuf );
 }
 
 void loop() {

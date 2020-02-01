@@ -145,22 +145,20 @@ class MoToButton {
     button_t allStates() {                          // bit field of all buttons (debounced)
        return ( _actState );
     }
-    button_t changed(){                            // all bits are set where state is different from last call
+    button_t changed(){                             // all bits are set where state is different from last call
       button_t temp = _actState ^ _lastChanged;
       _lastChanged = _actState;
       return temp;
     }
     
-    boolean shortPress( uint8_t buttonNbr ) {
-      // if button was pressed short
-      if ( buttonNbr >= _buttonCnt ) return 0;
+    boolean shortPress( uint8_t buttonNbr ) {       // if button was pressed short
+     if ( buttonNbr >= _buttonCnt ) return 0;
       // get short pressed state of button (debounced)
       boolean temp = bitRead( _shortPress, buttonNbr );
       bitClear( _shortPress, buttonNbr );
       return temp;
     }
-    boolean longPress( uint8_t buttonNbr ) {
-      // if button was pressed long
+    boolean longPress( uint8_t buttonNbr ) {        // if button was pressed long
       if ( buttonNbr >= _buttonCnt ) return 0;
       // get short pressed state of button (debounced)
       boolean temp = bitRead( _longPress, buttonNbr );
@@ -168,16 +166,14 @@ class MoToButton {
       return temp;
     }
 
-    boolean pressed( uint8_t buttonNbr ) {
-      // leading edge of button press
+    boolean pressed( uint8_t buttonNbr ) {          // leading edge of button press
       if ( buttonNbr >= _buttonCnt ) return 0;
       // get momentarily pressed state of button (debounced)
       boolean temp = bitRead( _leadingEdge, buttonNbr );
       bitClear( _leadingEdge, buttonNbr );
       return temp;
     }
-    boolean released( uint8_t buttonNbr ) {  // trailing edge of button press
-      // leading edge of button press
+    boolean released( uint8_t buttonNbr ) {         // trailing edge of button press
       if ( buttonNbr >= _buttonCnt ) return 0;
       // get momentarily released state of button (debounced)
       boolean temp = bitRead( _trailingEdge, buttonNbr );

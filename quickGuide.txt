@@ -1,0 +1,40 @@
+ Default is managing up to 16 buttons/switches.
+ The default can be changed to save RAM (up to 8 buttons) or to manage up to 32 buttons (with additional RAM consumption). 
+ This can be achieved by adding a '#define BUTTON_CNT nn' before the #include <MoToButtons>, where nn is the number 
+ of buttons to be managed ( 2...32 ). When this define is used, the best fit is automatically selected.
+  
+ Reading the hardware state of the buttons is done by a usercallback function. 
+ This enables designs where the buttons/switches are arranged in a matrix and/or read via a port extender.
+ The return value of this function has to be a 8-Bit, 16-Bit or 32-Bit value according to the maximum manageable 
+ number of buttons. Every button/switch is represented by one bit, where '1' means the button is pressed.
+
+ 'button_t' is automtically set to the correct type and can be used to define the type of the callback function.
+ 
+
+  Constructor parameters:
+    button_t (*getHWbuttons)()  Adress of the userfuction that reads the state of the buttons
+    debTime                     Debouncetime in ms
+    pressTime                   (in ms ) If the button is pressed longer, it is a 'long press'
+                                max presstime = debTime*255
+    MoToButton( button_t (*getHWbuttons)(), uint8_t debTime, uint16_t pressTime );
+    example in sketch: 
+        MoToButton Buttons( readFunction, 20, 500 );
+  
+  Methods to be called in loop:
+    void    processButtons();                 // must be called in the loop frequently
+                                            // if it is called less frequently than debTime, pressTime will be inaccurate
+    Reading the debounced state of the Buttons/Switches:                                          
+      boolean state( uint8_t buttonNbr );       // get static state of button (debounced)
+      button_t allStates();                     // bit field of all buttons (debounced)
+      button_t changed();                       // all bits are set where state has changed since last call
+  
+    Reading events:
+      boolean shortPress( uint8_t buttonNbr );  // true if button was pressed short ( set when button is released, reset after call )  
+      boolean longPress( uint8_t buttonNbr );   // true if button was pressed long ( set when button is released, reset after call )  
+      boolean pressed( uint8_t buttonNbr );     // true if button is pressed ( reset after call )
+      boolean released( uint8_t buttonNbr );    // true if button is released ( reset after call )
+  
+    Event bits are set at the corresponding edge and they are cleared 
+    when read or at the next inverted edge ( pressed-> released or vice versa )
+
+    buttonNbr is a value from 0 to max buttons-1.
