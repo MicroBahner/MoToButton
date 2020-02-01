@@ -5,7 +5,7 @@
 // define pin numbers
 const byte buttonPin [BUTTON_CNT] = { A0, A1, A2, A3 };
 char txtBuf[50];
-uint32_t lastPrintTime = 0;
+
 button_t getHW( void ) {
   // raw reading of buttons
   button_t buttonTemp = 0;
@@ -15,7 +15,7 @@ button_t getHW( void ) {
   return buttonTemp;
 }
 
-MoToButton button1( getHW, 20, 500 );
+MoToButton Buttons( getHW, 20, 500 );
 
 void setup()
 {
@@ -32,31 +32,30 @@ void setup()
 void loop() {
   //--------------------------------------------------------
   // read and process buttons
-  button1.processButtons();
+  Buttons.processButtons();
   // 
   //--------------------------------------------------------
-  // print state of buttons every second
-  if ( millis()-lastPrintTime > 1000 ) {
-    lastPrintTime = millis();
-    sprintf( txtBuf, "State: %d %d %d %d", button1.state(0), button1.state(1), button1.state(2), button1.state(3) );
-    Serial.println( txtBuf );
+  // print state of buttons if at least one changed
+  if ( Buttons.changed() ) {
+    sprintf( txtBuf, "State: %d %d %d %d - ", Buttons.state(0), Buttons.state(1), Buttons.state(2), Buttons.state(3) );
+    Serial.print( txtBuf ); Serial.println( Buttons.allStates(),BIN );
   }
   
   // print to serial monitor if an event happens ( pressing or releasing )
   for ( byte btnNbr = 0; btnNbr < BUTTON_CNT; btnNbr++) {
-    if ( button1.pressed(btnNbr) ) {
+    if ( Buttons.pressed(btnNbr) ) {
       sprintf( txtBuf, "button %d pressed", btnNbr );
       Serial.println(txtBuf);
     }
-    if ( button1.released(btnNbr) ) {
+    if ( Buttons.released(btnNbr) ) {
       sprintf( txtBuf, "button %d released", btnNbr );
       Serial.println(txtBuf);
     }
-    if ( button1.longPress(btnNbr) ) {
+    if ( Buttons.longPress(btnNbr) ) {
       sprintf( txtBuf, "button %d pressed long", btnNbr );
       Serial.println(txtBuf);
     }
-    if ( button1.shortPress(btnNbr) ) {
+    if ( Buttons.shortPress(btnNbr) ) {
       sprintf( txtBuf, "button %d pressed short", btnNbr );
       Serial.println(txtBuf);
     }

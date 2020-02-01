@@ -30,6 +30,8 @@
                                             // if it is called less frequently than debTime, pressTime will be inaccurate
     Reading the debounced state of the Buttons/Switches:                                          
       boolean state( uint8_t buttonNbr );       // get static state of button (debounced)
+      button_t allStates();                     // bit field of all buttons (debounced)
+      button_t changed();                       // all bits are set where state has changed since last call
   
     Reading events:
       boolean shortPress( uint8_t buttonNbr );  // true if button was pressed short ( set when button is released, reset after call )  
@@ -89,6 +91,7 @@ class MoToButton {
       _lastReadTime = 0;     // Last time HW state was read
       // Bit fields to hold various button states
       _lastState = 0;
+      _lastChanged = 0;
       _actState = 0;
       _longPress = 0;
       _shortPress = 0;
@@ -134,12 +137,20 @@ class MoToButton {
       }
     }
 
-    boolean state( uint8_t buttonNbr ) {
+    boolean state( uint8_t buttonNbr ) {            // get static state of button (debounced)
       if ( buttonNbr >= _buttonCnt ) return 0;
-      // get static state of button (debounced)
       return bitRead( _actState, buttonNbr );
     }
 
+    button_t allStates() {                          // bit field of all buttons (debounced)
+       return ( _actState );
+    }
+    button_t changed(){                            // all bits are set where state is different from last call
+      button_t temp = _actState ^ _lastChanged;
+      _lastChanged = _actState;
+      return temp;
+    }
+    
     boolean shortPress( uint8_t buttonNbr ) {
       // if button was pressed short
       if ( buttonNbr >= _buttonCnt ) return 0;
@@ -182,6 +193,7 @@ class MoToButton {
     button_t  (*_getHWbuttons)();  // Ptr to user function to read raw state of buttons
     // Bit fields to hold various button states
     button_t  _lastState;
+    button_t  _lastChanged;
     button_t  _actState;
     button_t  _longPress;
     button_t  _shortPress;
