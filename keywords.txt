@@ -17,6 +17,9 @@ processButtons	KEYWORD2
 state	KEYWORD2
 allStates	KEYWORD2
 changed	KEYWORD2
+forceChanged	KEYWORD2
+resetChanged	KEYWORD2
+
 shortPress	KEYWORD2
 longPress	KEYWORD2
 pressed	KEYWORD2
@@ -27,7 +30,9 @@ released	KEYWORD2
 # Constants (LITERAL1)
 #######################################
 button_t	LITERAL1
-BUTTON_CNT	LITERAL1
+MAX8BUTTONS	LITERAL1
+MAX16BUTTONS	LITERAL1
+MAX32BUTTONS	LITERAL1
 
 
 

@@ -5,8 +5,7 @@
 
  Default is managing up to 16 buttons/switches.
  The default can be changed to save RAM (up to 8 buttons) or to manage up to 32 buttons (with additional RAM consumption). 
- This can be achieved by adding a '#define BUTTON_CNT nn' before the #include <MoToButtons>, where nn is the number 
- of buttons to be managed ( 2...32 ). When this define is used, the best fit is automatically selected.
+ This can be achieved by inserting '#define MAX32BUTTONS' or '#define MAX8BUTTONS'  before the #include <MoToButtons>.
   
  Reading the hardware state of the buttons is done by a usercallback function. 
  This enables designs where the buttons/switches are arranged in a matrix and/or read via a port extender.
@@ -26,8 +25,8 @@
         MoToButton Buttons( readFunction, 20, 500 );
   
   Methods to be called in loop:
-    void    processButtons();                 // must be called in the loop frequently
-                                            // if it is called less frequently than debTime, pressTime will be inaccurate
+    void    processButtons();                   // must be called in the loop frequently
+                                                // if it is called less frequently than debTime, pressTime will be inaccurate
     Reading the debounced state of the Buttons/Switches:                                          
       boolean state( uint8_t buttonNbr );       // get static state of button (debounced)
       button_t allStates();                     // bit field of all buttons (debounced)
@@ -39,6 +38,10 @@
       boolean pressed( uint8_t buttonNbr );     // true if button is pressed ( reset after call )
       boolean released( uint8_t buttonNbr );    // true if button is released ( reset after call )
   
+    void forceChanged(){                        // force all changed with call of next 'pressed', 'released' ore 'changed'
+    void resetChanged(){                        // clear alle events of 'pressed', 'released' or 'changed'
+                                                 // ( longPress() and shortPress() are unaffected )
+   
     Event bits are set at the corresponding edge and they are cleared 
     when read or at the next inverted edge ( pressed-> released or vice versa )
 
@@ -65,22 +68,29 @@
 
 #include <Arduino.h>
 
-#ifndef BUTTON_CNT
-#define BUTTON_CNT 16
+#ifdef BUTTON_CNT 
+    #if BUTTON_CNT>32
+        #error "too much buttons"
+    #elif BUTTON_CNT>16
+        #define MAX32BUTTONS
+        #warning "Please use MAX32BUTTONS instead of BUTTON_CNT"
+    #elif BUTTON_CNT>8
+        #define MAX16BUTTONS
+        #warning "Please use MAX16BUTTONS instead of BUTTON_CNT or leave it out completely"
+    #else
+        #define MAX8BUTTONS
+        #warning "Please use MAX8BUTTONS instead of BUTTON_CNT"
+    #endif
 #endif
 
-#if BUTTON_CNT>32
-#error "too much buttons"
-#elif BUTTON_CNT>16
+#ifdef MAX32BUTTONS
 typedef uint32_t button_t;
-//#warning "button_t = uint32_t!"
-#elif BUTTON_CNT>8
-typedef uint16_t button_t;
-//#warning "button_t = uint16_t!"
-#else
+#elif defined MAX8BUTTONS
 typedef uint8_t button_t;
-//#warning "button_t = uint8_t!"
+#else
+typedef uint16_t button_t;
 #endif
+
 
 class MoToButton {
   public:
@@ -145,10 +155,25 @@ class MoToButton {
     button_t allStates() {                          // bit field of all buttons (debounced)
        return ( _actState );
     }
+    
     button_t changed(){                             // all bits are set where state is different from last call
       button_t temp = _actState ^ _lastChanged;
       _lastChanged = _actState;
       return temp;
+    }
+    
+    void forceChanged(){                             // force all changed with call of next 'pressed', 'released' ore 'changed'
+      _lastChanged = ~_actState;
+      _leadingEdge = _actState;
+      _trailingEdge = ~_actState;
+      return;
+    }
+    
+    void resetChanged(){                             // clear alle events of 'pressed', 'released' or 'changed'
+      _lastChanged = _actState;
+      _leadingEdge = 0;
+      _trailingEdge = 0;
+      return;
     }
     
     boolean shortPress( uint8_t buttonNbr ) {       // if button was pressed short

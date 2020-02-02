@@ -34,6 +34,10 @@
       boolean pressed( uint8_t buttonNbr );     // true if button is pressed ( reset after call )
       boolean released( uint8_t buttonNbr );    // true if button is released ( reset after call )
   
+    void forceChanged(){                        // force all changed with call of next 'pressed', 'released' ore 'changed'
+    void resetChanged(){                        // clear alle events of 'pressed', 'released' or 'changed'
+                                                // ( longPress() and shortPress() are unaffected )
+  
     Event bits are set at the corresponding edge and they are cleared 
     when read or at the next inverted edge ( pressed-> released or vice versa )
 
