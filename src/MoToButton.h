@@ -5,7 +5,7 @@
 
  Default is managing up to 16 buttons/switches.
  The default can be changed to save RAM (up to 8 buttons) or to manage up to 32 buttons (with additional RAM consumption). 
- This can be achieved by inserting '#define MAX32BUTTONS' or '#define MAX8BUTTONS'  before the #include <MoToButtons>.
+ This can be achieved by inserting '#define MAX32BUTTONS' or '#define MAX8BUTTONS'  before the #include <MoToButtons.h>.
   
  Reading the hardware state of the buttons is done by a usercallback function. 
  This enables designs where the buttons/switches are arranged in a matrix and/or read via a port extender.

@@ -13,10 +13,9 @@ The buttons/switches are read in via a user callback function. This enables matr
 - Events: Pressed, released, pressed long and pressed short
   
 #### Overview
-Default is managing up to 16 buttons/switches.
-The default can be changed to save RAM (up to 8 buttons) or to manage up to 32 buttons (with additional RAM consumption). 
-This can be achieved by adding a '#define BUTTON_CNT nn' before the #include <MoToButtons>, where nn is the number 
-of buttons to be managed ( 2...32 ). When this define is used, the best fit is automatically selected.
+ Default is managing up to 16 buttons/switches.
+ The default can be changed to save RAM (up to 8 buttons) or to manage up to 32 buttons (with additional RAM consumption). 
+ This can be achieved by inserting '#define MAX32BUTTONS' or '#define MAX8BUTTONS'  before the #include <MoToButtons.h>.
   
 Reading the hardware state of the buttons is done by a usercallback function. 
 This enables designs where the buttons/switches are arranged in a matrix and/or read via a port extender.
